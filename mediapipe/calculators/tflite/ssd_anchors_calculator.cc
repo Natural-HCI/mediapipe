@@ -100,6 +100,12 @@ REGISTER_CALCULATOR(SsdAnchorsCalculator);
 
 absl::Status SsdAnchorsCalculator::GenerateAnchors(
     std::vector<Anchor>* anchors, const SsdAnchorsCalculatorOptions& options) {
+
+  std::cout.imbue(std::locale("en_US.UTF-8"));
+  std::cout << "inside GenerateAnchors" << std::endl;
+  std::cout << "reduce_boxes_in_lowest_layer = " << options.reduce_boxes_in_lowest_layer() << std::endl;
+
+
   // Verify the options.
   if (!options.feature_map_height_size() && !options.strides_size()) {
     return absl::InvalidArgumentError(
@@ -107,6 +113,7 @@ absl::Status SsdAnchorsCalculator::GenerateAnchors(
         "one.");
   }
   if (options.feature_map_height_size()) {
+    std::cout << "note: feature_map_height_size was provided to calculator" << std::endl;
     if (options.strides_size()) {
       LOG(ERROR) << "Found feature map shapes. Strides will be ignored.";
     }
@@ -148,6 +155,7 @@ absl::Status SsdAnchorsCalculator::GenerateAnchors(
           aspect_ratios.push_back(options.aspect_ratios(aspect_ratio_id));
           scales.push_back(scale);
         }
+        std::cout << "interpolated_scale_aspect_ratio = " << options.interpolated_scale_aspect_ratio() << std::endl;
         if (options.interpolated_scale_aspect_ratio() > 0.0) {
           const float scale_next =
               last_same_stride_layer == options.strides_size() - 1
